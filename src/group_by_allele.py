@@ -55,8 +55,8 @@ def group_alleles(data1, data2):
     # 'pathogenic', 'benign', 'conflicted', 'gold_stars',
     # concatenate columns that may have lists of values    
     for column_name in ('measureset_type','measureset_id','rcv','allele_id',
-        'symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance', 
-        'review_status', 'all_submitters',
+        'symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance', 'clinical_significance_ordered',
+        'review_status', 'review_status_ordered', 'all_submitters',
         'all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence',
         'disease_mechanism', 'origin', 'xrefs'):
         all_non_empty_values = filter(lambda s: s, data1[column_name].split(';') + data2[column_name].split(';'))
