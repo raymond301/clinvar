@@ -17,26 +17,26 @@ if (length(args) != 3) {
   exit(-1)
 }
 
-variant_summary_table = args[1]
-clinvar_allele_trait_pairs_table = args[2]
-output_table = args[3]
+variant_summary_table = gzfile(args[1])
+clinvar_allele_trait_pairs_table = gzfile(args[2])
+output_table = gzfile(args[3], 'w')
 
 
 # load what we've extracted from the XML so far
-xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=T)
+xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F)
 print(dim(xml_raw))
 
 # load the tab-delimited summary
-txt_download = read.table(variant_summary_table,sep='\t',comment.char='',quote='',header=T,skipNul = TRUE,check.names = FALSE)
+txt_download = read.table(variant_summary_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F)
 print(dim(txt_download))
 
 # subset the tab-delimited summary to desired rows and cols
 colnames(txt_download) = gsub('\\.','_',tolower(colnames(txt_download)))
 colnames(txt_download) = replace(colnames(txt_download), 1, "allele_id")
 
-desired_columns<-c('allele_id','clinicalsignificance','reviewstatus')
+desired_columns<-c('allele_id','clinicalsignificance','reviewstatus','lastevaluated')
 txt_extract = subset(txt_download, assembly == 'GRCh37', select=desired_columns)
-colnames(txt_extract)<-c('allele_id','clinical_significance','review_status')
+colnames(txt_extract)<-c('allele_id','clinical_significance','review_status','last_evaluated')
 #drop the clinical_significance and review_status in clinvar_record.tsv 
 #use the summary ones in variant_summary.txt
 xml_extract = subset(xml_raw,select=-c(clinical_significance,review_status))
@@ -73,4 +73,6 @@ combined$benign = as.integer(grepl('enign',combined$clinical_significance))
 # re-order the columns
 combined = combined[,c('chrom','pos','ref','alt','measureset_type','measureset_id','rcv','allele_id','symbol', 'hgvs_c','hgvs_p','molecular_consequence','clinical_significance', 'clinical_significance_ordered', 'pathogenic', 'benign', 'conflicted', 'review_status', 'review_status_ordered', 'gold_stars','all_submitters','all_traits','all_pmids', 'inheritance_modes', 'age_of_onset','prevalence', 'disease_mechanism', 'origin', 'xrefs')]
 
-write.table(combined, output_table,sep='\t',row.names=F,col.names=T,quote=F)
+write.table(combined, output_table, sep='\t', row.names=F, col.names=T, quote=F)
+
+close(output_table)

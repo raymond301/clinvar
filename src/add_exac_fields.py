@@ -3,6 +3,7 @@ Script for generating a new clinvar table with the ExAC fields below added to ea
 """
 import argparse
 from collections import defaultdict
+import gzip
 import pysam
 import sys
 
@@ -84,7 +85,12 @@ def get_exac_column_values(exac_f, chrom, pos, ref, alt):
     info_fields = [('Filter', filter_value)] + [tuple(kv.split('=')) for kv in exac_row_fields[7].split(';')]
     info_fields = filter(lambda kv: kv[0] in NEEDED_EXAC_FIELDS_SET, info_fields)
     info_fields = dict(info_fields)
-    exac_column_values = [info_fields[k] for k in NEEDED_EXAC_FIELDS]
+    try:
+        exac_column_values = [info_fields[k] for k in NEEDED_EXAC_FIELDS]
+    except Exception, e:
+        print([('Filter', filter_value)] + [tuple(kv.split('=')) for kv in exac_row_fields[7].split(';')])
+        print(info_fields)
+        raise ValueError("ERROR: unable to parse INFO fields in row: %s.  %s" % (exac_row_fields, e)) 
 
     # check that the clinvar alt allele matches (one of the) ExAC alt allele(s)    
     #if len(alt_alleles) > 1:
@@ -96,7 +102,7 @@ def get_exac_column_values(exac_f, chrom, pos, ref, alt):
 
 
 exac_f = pysam.TabixFile(args.exac_sites_vcf)
-clinvar_f = open(args.clinvar_table)
+clinvar_f = gzip.open(args.clinvar_table) if args.clinvar_table.endswith('.gz') else open(args.clinvar_table)
 clinvar_header = next(clinvar_f).rstrip('\n').split('\t')
 clinvar_with_exac_header = clinvar_header + NEEDED_EXAC_FIELDS
 print("\t".join(clinvar_with_exac_header))
