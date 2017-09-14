@@ -46,6 +46,7 @@ combined = merge(xml_extract, txt_extract,by='allele_id',all.x=FALSE)
 
 # lookup table based on http://www.ncbi.nlm.nih.gov/clinvar/docs/details/
 gold_stars_table = list(
+  '-' = 0,
   'no assertion provided' = 0,
   'no assertion for the individual variant' = 0,
   'no assertion criteria provided' = 0,
