@@ -165,4 +165,4 @@ if __name__ == '__main__':
     parser.add_argument('-R', '--reference_fasta', type=str, default='',
         help="Path to FASTA file of reference genome. Must be samtools faidx'ed")
     args = parser.parse_args()
-    normalize_tab_delimited_file(sys.stdin, sys.stdout, args.reference_fasta)
+    normalize_tab_delimited_file(sys.stdin, sys.stdout, args.reference_fasta, False)
