@@ -8,6 +8,10 @@ src/*.pyc
 # normalize.py is retrieved from another repo
 src/normalize.py
 
+## remove pre-compile
+output/b37
+output/b38
+
 ### R files ###
 src/.RData
 src/.Rhistory
