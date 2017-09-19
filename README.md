@@ -96,3 +96,10 @@ ClinVar data, as a work of the United States federal government, are in the publ
 #### How to cite
 Zhang X, Minikel EV, O'Donnell-Luria AH et al. [ClinVar data parsing](https://wellcomeopenresearch.org/articles/2-33/v1) [version 1; referees: 2 approved]. Wellcome Open Res 2017, 2:33 
 (doi: 10.12688/wellcomeopenres.11640.1)
+
+
+## My Notes
+
+On 09/19/17
+
+git gc --prune=now --aggressive
