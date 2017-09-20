@@ -24,11 +24,11 @@ output_table = gzfile(args[3], 'w')
 
 # load what we've extracted from the XML so far
 xml_raw = read.table(clinvar_allele_trait_pairs_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F)
-print(dim(xml_raw))
+#print(dim(xml_raw))
 
 # load the tab-delimited summary
 txt_download = read.table(variant_summary_table, sep='\t', comment.char='', quote='', header=T, skipNul=T, check.names=F)
-print(dim(txt_download))
+#print(dim(txt_download))
 
 # subset the tab-delimited summary to desired rows and cols
 colnames(txt_download) = gsub('\\.','_',tolower(colnames(txt_download)))

@@ -31,6 +31,10 @@ Usage: normalize.py -R $b37ref < bad_file.txt > good_file.txt
 import sys
 import pysam
 import argparse
+import logging
+
+logging.basicConfig(filename='normalize.log', level=logging.ERROR,
+                    format='%(name)s (%(levelname)s): %(message)s')
 
 '''
 An Error class for rare cases where REF == ALT (seen in ClinVar XML)
@@ -133,25 +137,25 @@ def normalize_tab_delimited_file(infile, outfile, reference_fasta, verbose=True)
         try:
             data['chrom'], pos, data['ref'], data['alt'] = normalize(pysam_fasta, data['chrom'], pos, data['ref'], data['alt'])
         except RefEqualsAltError as e:
-            sys.stderr.write('\n'+str(e)+'\n')
+            logging.error(str(e))
             ref_equals_alt += 1
             continue
         except WrongRefError as e:
-            sys.stderr.write('\n'+str(e)+'\n')
+            logging.error(str(e))
             wrong_ref += 1
             continue
         except InvalidNucleotideSequenceError as e:
-            sys.stderr.write('\n'+str(e)+'\n')
+            logging.error(str(e))
             invalid_nucleotide += 1
             continue
         data['pos'] = str(pos)
         outfile.write('\t'.join([data[column] for column in columns]) + '\n')
         counter += 1
         if verbose:
-            sys.stderr.write("\r%s records processed\n"%(counter))
+            logging.info("%s records processed"%(counter))
     outfile.write('\n\n')
     if verbose:
-        sys.stderr.write("Final counts of variants discarded:\nREF == ALT: %s\nWrong REF: %s\nInvalid nucleotide: %s\n"%(ref_equals_alt, wrong_ref, invalid_nucleotide))
+        logging.warning("Final counts of variants discarded:\nREF == ALT: %s\nWrong REF: %s\nInvalid nucleotide: %s\n"%(ref_equals_alt, wrong_ref, invalid_nucleotide))
 
 '''
 Battery of test cases for normalize
@@ -165,4 +169,4 @@ if __name__ == '__main__':
     parser.add_argument('-R', '--reference_fasta', type=str, default='',
         help="Path to FASTA file of reference genome. Must be samtools faidx'ed")
     args = parser.parse_args()
-    normalize_tab_delimited_file(sys.stdin, sys.stdout, args.reference_fasta, False)
+    normalize_tab_delimited_file(sys.stdin, sys.stdout, args.reference_fasta)
