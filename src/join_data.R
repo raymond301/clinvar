@@ -63,10 +63,10 @@ gold_stars_table = list(
 combined$gold_stars = sapply(combined$review_status, function(k) { gold_stars_table[[k]] })
 
 # pathogenic = 1 if at least one submission says path or likely path, 0 otherwise
-combined$pathogenic = as.integer(grepl('athogenic',combined$clinical_significance))
+combined$pathogenic = as.integer(grepl('athogenic\\b',combined$clinical_significance))
 
 # conflicted = 1 if at least one submission each of [likely] benign and [likely] pathogenic
-combined$conflicted = as.integer(grepl('athogenic',combined$clinical_significance) & grepl('enign',combined$clinical_significance))
+combined$conflicted = as.integer((grepl('athogenic',combined$clinical_significance) & grepl('enign',combined$clinical_significance)) | grepl('Conflicting interpretations',combined$clinical_significance, ignore.case=TRUE))
 
 # benign = 1 if at least one submission says benign or likely benign, 0 otherwise
 combined$benign = as.integer(grepl('enign',combined$clinical_significance))
